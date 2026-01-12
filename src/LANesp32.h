@@ -1,27 +1,29 @@
 #ifndef LANESP32_H
 #define LANESP32_H
 
-// ============================================
-// LANesp32
-// Librería de encapsulación de red (ESP32)
-// ============================================
-//
-// Requiere que el firmware defina:
-//   - NET_MODE
-//   - NET_WIFI / NET_ETHERNET / NET_GSM
-//
-// NO inicializa red
-// NO usa NVS
-// NO decide lógica
-// ============================================
+#include <Arduino.h>
 
+// =========================
+// Modos de red
+// =========================
+#define NET_WIFI     1
+#define NET_ETHERNET 2
+#define NET_GSM      3
 
-// --- Configuración Wi-Fi ---
+// El firmware DEBE definir NET_MODE.
+// Si no lo hace, usamos WIFI por defecto.
+#ifndef NET_MODE
+  #define NET_MODE NET_WIFI
+#endif
+
+// =========================
+// WiFi
+// =========================
 #if NET_MODE == NET_WIFI
+
   #include <WiFi.h>
   #include <WiFiClientSecure.h>
 
-  // Valores por defecto si no existen
   #ifndef W_SSID
     #define W_SSID "IOT"
   #endif
@@ -29,11 +31,14 @@
   #ifndef W_PASSWORD
     #define W_PASSWORD "IOT"
   #endif
-#endif
 
+#endif // NET_WIFI
 
-// --- Configuración Ethernet ---
+// =========================
+// Ethernet
+// =========================
 #if NET_MODE == NET_ETHERNET
+
   #include <ETH.h>
 
   #ifndef ETH_PHY_ADDR
@@ -59,28 +64,20 @@
   #ifndef ETH_CLK_MODE
     #define ETH_CLK_MODE ETH_CLOCK_GPIO0_IN
   #endif
-#endif
 
+#endif // NET_ETHERNET
 
-// --- Configuración GSM ---
+// =========================
+// GSM (OPCIONAL)
+// =========================
 #if NET_MODE == NET_GSM
+
   #include <TinyGsmClient.h>
-  extern TinyGsm modem;
 
-  #ifndef GSM_APN
-    #define GSM_APN "internet"
+  #ifndef TINY_GSM_MODEM_SIM800
+    #define TINY_GSM_MODEM_SIM800
   #endif
 
-  #ifndef GSM_USER
-    #define GSM_USER ""
-  #endif
-
-  #ifndef GSM_PASS
-    #define GSM_PASS ""
-  #endif
-#endif
-
-
-#include <HTTPClient.h>
+#endif // NET_GSM
 
 #endif // LANESP32_H
